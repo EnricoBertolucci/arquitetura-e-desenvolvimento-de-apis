@@ -1,0 +1,28 @@
+# --- Variáveis de ambiente (segredos) ---
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# --- Banco de dados local (recriado via migrations + seed) ---
+*.db
+*.sqlite
+*.sqlite3
+
+# --- IDE / sistema ---
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
