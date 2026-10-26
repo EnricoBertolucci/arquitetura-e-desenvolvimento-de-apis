@@ -4,13 +4,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query, Response, status
 
-from app.dependencies import SessaoDB
+from app.dependencies import SessaoDB, exigir_autenticacao
 from app.models import TipoQuarto
 from app.routers.respostas import respostas
 from app.schemas.comum import PaginacaoLimit, PaginacaoSkip
 from app.schemas.quarto import QuartoAtualizacao, QuartoCriacao, QuartoResposta
 from app.services.quarto import QuartoServico
 
+# Leitura pública (catálogo); criação, alteração e exclusão exigem token JWT.
 router = APIRouter(prefix="/quartos", tags=["Quartos"])
 
 
@@ -62,7 +63,8 @@ def obter_quarto(quarto_id: int, db: SessaoDB):
     response_model=QuartoResposta,
     status_code=status.HTTP_201_CREATED,
     summary="Cria um quarto",
-    responses=respostas(400, 409),
+    dependencies=[exigir_autenticacao],
+    responses=respostas(400, 401, 403, 409),
 )
 def criar_quarto(dados: QuartoCriacao, response: Response, db: SessaoDB):
     quarto = QuartoServico(db).criar(dados)
@@ -75,7 +77,8 @@ def criar_quarto(dados: QuartoCriacao, response: Response, db: SessaoDB):
     response_model=QuartoResposta,
     summary="Atualiza parcialmente um quarto",
     description='Envie apenas os campos a alterar. Ex.: `{"ativo": false}` para colocar o quarto em manutenção.',
-    responses=respostas(400, 404, 409),
+    dependencies=[exigir_autenticacao],
+    responses=respostas(400, 401, 403, 404, 409),
 )
 def atualizar_quarto(quarto_id: int, dados: QuartoAtualizacao, db: SessaoDB):
     return QuartoServico(db).atualizar(quarto_id, dados)
@@ -86,7 +89,8 @@ def atualizar_quarto(quarto_id: int, dados: QuartoAtualizacao, db: SessaoDB):
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Exclui um quarto",
     description="Quartos com reservas não podem ser excluídos (409); use a desativação.",
-    responses=respostas(404, 409),
+    dependencies=[exigir_autenticacao],
+    responses=respostas(401, 403, 404, 409),
 )
 def remover_quarto(quarto_id: int, db: SessaoDB) -> Response:
     QuartoServico(db).remover(quarto_id)

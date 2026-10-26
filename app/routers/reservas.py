@@ -3,14 +3,20 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query, Response, status
 
-from app.dependencies import SessaoDB
+from app.dependencies import SessaoDB, exigir_autenticacao
 from app.models import StatusReserva
 from app.routers.respostas import respostas
 from app.schemas.comum import PaginacaoLimit, PaginacaoSkip
 from app.schemas.reserva import ReservaAtualizacao, ReservaCriacao, ReservaDetalhe, ReservaResposta
 from app.services.reserva import ReservaServico
 
-router = APIRouter(prefix="/reservas", tags=["Reservas"])
+# Todas as rotas exigem token JWT: os dados envolvem informações pessoais (LGPD).
+router = APIRouter(
+    prefix="/reservas",
+    tags=["Reservas"],
+    dependencies=[exigir_autenticacao],
+    responses=respostas(401, 403),
+)
 
 
 @router.get(
