@@ -140,7 +140,7 @@ Paginação em todas as listagens: `skip` (padrão 0) e `limit` (padrão 20, má
 
 | Método | Endpoint | Finalidade | Entrada | Respostas |
 |---|---|---|---|---|
-| GET 🔒 | `/reservas` | Listar com filtros | query: `status`, `hospede_id`, `quarto_id`, `data_de`, `data_ate`, `skip`, `limit` | 200 / 401 |
+| GET 🔒 | `/reservas` | Listar com filtros | query: `status`, `hospede_id`, `quarto_id`, `data_de` e `data_ate` (intervalo da data de check-in), `skip`, `limit` | 200 / 401 |
 | GET 🔒 | `/reservas/{id}` | Consultar (com hóspede e quarto embutidos) | id | 200 / 401 / 404 |
 | POST 🔒 | `/reservas` | Criar | JSON `hospede_id`, `quarto_id`, datas, `qtd_hospedes`, `observacoes` | 201 / 400 / 401 / 404 hóspede ou quarto inexistente / 409 sobreposição ou quarto inativo |
 | PATCH 🔒 | `/reservas/{id}` | Alterar datas, quarto, qtd, status, observações | id + JSON parcial | 200 / 400 / 401 / 404 / 409 |

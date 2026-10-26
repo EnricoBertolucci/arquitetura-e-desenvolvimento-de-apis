@@ -7,6 +7,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
+from app.exceptions import registrar_handlers
+from app.routers import hospedes, quartos, reservas
 
 settings = get_settings()
 
@@ -26,6 +28,12 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type"],
     allow_credentials=False,
 )
+
+registrar_handlers(app)
+
+app.include_router(quartos.router)
+app.include_router(hospedes.router)
+app.include_router(reservas.router)
 
 
 @app.get("/", tags=["Status"], summary="Verifica se a API está no ar")

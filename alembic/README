@@ -1,0 +1,8 @@
+Configuração do Alembic para um único banco de dados.
+
+Comandos principais (executar na raiz do projeto):
+
+    alembic upgrade head                              # aplica todas as migrations
+    alembic downgrade -1                              # desfaz a última migration
+    alembic revision --autogenerate -m "descricao"    # gera migration a partir dos modelos
+    alembic current                                   # mostra a versão atual do banco

@@ -62,7 +62,31 @@ python -c "import secrets; print(secrets.token_urlsafe(48))"
 | `CORS_ORIGINS` | Origens permitidas, separadas por vírgula |
 | `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Usuário administrador criado pelo seed |
 
-Banco de dados e usuário inicial: _(em breve)_
+## Banco de dados
+
+O banco SQLite (`hotel.db`) é criado pelas **migrations do Alembic**, que reproduzem toda a estrutura (tabelas, chaves estrangeiras, constraints e índices):
+
+```bash
+alembic upgrade head
+```
+
+Em seguida, crie o usuário administrador (credenciais de `ADMIN_USERNAME`/`ADMIN_PASSWORD` do `.env`) e os dados de exemplo:
+
+```bash
+python -m scripts.seed                 # administrador + 6 quartos, 4 hóspedes e 3 reservas
+python -m scripts.seed --sem-exemplos  # somente o administrador
+```
+
+O seed pode ser executado mais de uma vez sem duplicar registros. Para recriar o banco do zero, apague o arquivo `hotel.db` e repita os dois comandos.
+
+| Tabela | Descrição | Relacionamentos |
+|---|---|---|
+| `quartos` | Número, tipo, capacidade, diária, andar, ativo | 1:N com `reservas` |
+| `hospedes` | Nome, CPF, e-mail, telefone, data de nascimento | 1:N com `reservas` |
+| `reservas` | Período, qtd. de hóspedes, status, valor total | N:1 com `hospedes` e `quartos` |
+| `usuarios` | Usuários da API (senha armazenada com hash bcrypt) | — |
+
+Detalhes da modelagem em [`docs/MODELAGEM.md`](docs/MODELAGEM.md).
 
 ## Execução
 
