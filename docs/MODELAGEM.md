@@ -192,7 +192,7 @@ hotel-api/                 ← raiz do repositório
 ```
 
 Bibliotecas planejadas: `fastapi`, `uvicorn[standard]`, `sqlalchemy`, `alembic`, `pydantic-settings`, `email-validator`, `pyjwt`, `bcrypt`, `python-multipart`, `pytest`, `httpx`.
-Obs.: as aulas usaram `python-jose` e `passlib`; proponho **PyJWT** e **bcrypt** direto porque `passlib` não é mais mantido e apresenta incompatibilidade com versões atuais do `bcrypt` — isso vira argumento técnico no relatório (Crit. 2).
+Obs.: optou-se por **PyJWT** e **bcrypt** em vez de `python-jose` e `passlib`, pois o `passlib` não é mais mantido e é incompatível com as versões atuais do `bcrypt`.
 
 Variáveis de ambiente (`.env.example`): `DATABASE_URL`, `JWT_SECRET_KEY`, `JWT_ALGORITHM`, `JWT_EXPIRE_MINUTES`, `CORS_ORIGINS`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`.
 
