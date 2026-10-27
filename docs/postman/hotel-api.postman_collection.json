@@ -1,0 +1,708 @@
+{
+  "info": {
+    "name": "Hotel API",
+    "description": "Coleção de requisições da Hotel API. Execute primeiro **Auth → Login** (defina a variável `senha` da coleção com a senha de ADMIN_PASSWORD do seu .env); o token é salvo na variável `token` e usado pelas rotas protegidas.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "usuario",
+      "value": "admin"
+    },
+    {
+      "key": "senha",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Retorna o token JWT e o salva na variável `token`.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{usuario}}",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "{{senha}}",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('status 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('token', pm.response.json().access_token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Usuário autenticado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Rota protegida sem token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quartos",
+      "item": [
+        {
+          "name": "Listar quartos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/quartos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quartos"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Filtrar suítes para 3+ pessoas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/quartos?tipo=SUITE&capacidade_min=3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quartos"
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "SUITE"
+                },
+                {
+                  "key": "capacidade_min",
+                  "value": "3"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Quartos livres no período",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/quartos?disponivel_de=2026-12-20&disponivel_ate=2026-12-23",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quartos"
+              ],
+              "query": [
+                {
+                  "key": "disponivel_de",
+                  "value": "2026-12-20"
+                },
+                {
+                  "key": "disponivel_ate",
+                  "value": "2026-12-23"
+                }
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Consultar quarto",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/quartos/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quartos",
+                "1"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Criar quarto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/quartos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quartos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"numero\": \"401\",\n  \"tipo\": \"SUITE\",\n  \"capacidade\": 3,\n  \"preco_diaria\": 390.0,\n  \"andar\": 4,\n  \"descricao\": \"Suíte com varanda.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Desativar quarto (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/quartos/7",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quartos",
+                "7"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ativo\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Excluir quarto",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/quartos/7",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quartos",
+                "7"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Excluir quarto com reservas (409)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/quartos/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "quartos",
+                "2"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hóspedes",
+      "item": [
+        {
+          "name": "Listar hóspedes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Buscar por nome",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes?nome=souza",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes"
+              ],
+              "query": [
+                {
+                  "key": "nome",
+                  "value": "souza"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Consultar hóspede",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reservas do hóspede",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes/1/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes",
+                "1",
+                "reservas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cadastrar hóspede",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Maria Oliveira\",\n  \"cpf\": \"529.982.247-25\",\n  \"email\": \"maria.oliveira@example.com\",\n  \"telefone\": \"(41) 99999-0000\",\n  \"data_nascimento\": \"1992-05-10\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cadastrar hóspede inválido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Al\",\n  \"cpf\": \"111.111.111-11\",\n  \"email\": \"email-invalido\",\n  \"telefone\": \"1234\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Atualizar hóspede (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes/5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes",
+                "5"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefone\": \"(41) 98888-7777\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Excluir hóspede",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/hospedes/5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hospedes",
+                "5"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservas",
+      "item": [
+        {
+          "name": "Listar reservas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filtrar confirmadas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservas?status=CONFIRMADA",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "CONFIRMADA"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Consultar reserva",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar reserva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospede_id\": 4,\n  \"quarto_id\": 3,\n  \"data_checkin\": \"2026-12-20\",\n  \"data_checkout\": \"2026-12-23\",\n  \"qtd_hospedes\": 2,\n  \"observacoes\": \"Chegada prevista após as 22h.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Criar reserva sobreposta (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hospede_id\": 2,\n  \"quarto_id\": 3,\n  \"data_checkin\": \"2026-12-21\",\n  \"data_checkout\": \"2026-12-22\",\n  \"qtd_hospedes\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Alterar check-out (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/4",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "4"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"data_checkout\": \"2026-12-24\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cancelar reserva (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/4",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "4"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CANCELADA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Excluir reserva",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/reservas/4",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reservas",
+                "4"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
